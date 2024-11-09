@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Api Checker</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 50%; 
+            margin-bottom: 20px;
+        }
+
+        caption {
+            font-weight: bold;
+            text-align: left;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        td {
+            height: 20px; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Free Api Checker</h1>      
+    <div id="table-container"></div>
+    
+    <script>
+/* ******************************************************************
+ JAVASCRIPT section
+*******************************************************************/
+
+        /* ******************************************************************
+        DATA subsection
+        *******************************************************************/
+            const data = [
+                {
+                    apiId: 1,
+                    apiName: "Harry Potter API - https://hp-api.onrender.com/",
+                    apiFeatures: [
+                        {
+                            featureId: 1,
+                            featureName: "All Characters",
+                            featureUrl: "https://hp-api.onrender.com/api/character"
+                        },
+                        {
+                            featureId: 2,
+                            featureName: "Specific Character by ID",
+                            featureUrl: "https://hp-api.onrender.com/api/character/9e3f7ce4-b9a7-4244-b709-dae5c1f1d4a8"
+                        },
+                        {
+                            featureId: 3,
+                            featureName: "Hogwarts Students",
+                            featureUrl: "https://hp-api.onrender.com/api/characters/students"
+                        },
+                        {
+                            featureId: 4,
+                            featureName: "Hogwarts Staff",
+                            featureUrl: "https://hp-api.onrender.com/api/characters/staff"
+                        },
+                        {
+                            featureId: 5,
+                            featureName: "Characters in a House",
+                            featureUrl: "https://hp-api.onrender.com/api/characters/house/gryffindor"
+                        },
+                        {
+                            featureId: 6,
+                            featureName: "All Spells",
+                            featureUrl: "https://hp-api.onrender.com/api/spells"
+                        },
+                    ]
+                },
+                {
+                    apiId: 2,
+                    apiName: "Harry Potter API - vol. 2",
+                    apiFeatures: [
+                        {
+                            featureId: 1,
+                            featureName: "All Characters",
+                            featureUrl: "https://hp-api.onrender.com/api/characters"
+                        },
+                        {
+                            featureId: 2,
+                            featureName: "Specific Character by ID",
+                            featureUrl: "https://hp-api.onrender.com/api/character/9e3f7ce4-b9a7-4244-b709-dae5c1f1d4a8"
+                        },            
+                        {
+                            featureId: 3,
+                            featureName: "Characters in a House",
+                            featureUrl: "https://hp-api.onrender.com/api/characters/house/gryffindor"
+                        },
+                        {
+                            featureId: 4,
+                            featureName: "All Spells",
+                            featureUrl: "https://hp-api.onrender.com/api/spell"
+                        },
+                    ]
+                }
+            ]
+
+            /* ******************************************************************
+            FUNCTIONS subsection
+            *******************************************************************/
+            function createTables(data) {
+            const container = document.getElementById('table-container');
+
+            data.forEach(apiObject => {
+                const table = document.createElement('table');
+
+                const caption = document.createElement('caption');
+                caption.textContent = apiObject.apiName;
+                table.appendChild(caption);
+
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                apiObject.apiFeatures.forEach(feature => {
+                const th = document.createElement('th');
+                th.textContent = feature.featureName;
+                headerRow.appendChild(th);
+                });
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                
+                const tbody = document.createElement('tbody');
+                const row = document.createElement('tr');
+                apiObject.apiFeatures.forEach(feature => {
+                const cell = document.createElement('td');
+                checkHttpStatus(feature.featureUrl)
+                    .then(status => {
+                    if (status === 200) {
+                        cell.textContent = '200 OK';
+                        cell.style.backgroundColor = 'lightgreen';
+                    } else {
+                        cell.textContent = `Error ${status}`;
+                        cell.style.backgroundColor = 'orangered';
+                    }
+                    })
+                    .catch(error => {
+                    console.error('Chyba při získávání dat:', error);
+                    cell.textContent = 'Chyba';
+                    });
+                row.appendChild(cell);
+                });
+                tbody.appendChild(row);
+                table.appendChild(tbody);
+                
+                container.appendChild(table);
+            });
+            }
+
+            function checkHttpStatus(url) {
+            return fetch(url)
+                .then(response => response.status)
+                .catch(error => {
+                console.error('Chyba při získávání dat:', error);
+                return null;
+                });
+            }
+
+            /* ******************************************************************
+            RUN subsection
+            *******************************************************************/
+            createTables(data);
+    </script>
+</body>
+</html>
